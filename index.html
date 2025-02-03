@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!!! :)</title>
+  <link rel="shortcut icon" type="image/png" href="image/favicon.png" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .gift-box-container {
+      position: relative;
+      text-align: center;
+    }
+
+    .gift-box {
+      width: 150px;
+      height: 150px;
+      animation: bounce 1s infinite;
+      cursor: pointer;
+      transition: transform 1s, opacity 1s ease-in-out;
+    }
+
+    @keyframes bounce {
+      0% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-20px);
+      }
+      100% {
+        transform: translateY(0);
+      }
+    }
+
+    .opened-gift {
+      transform: scale(1.2);
+      opacity: 0;
+    }
+
+    .click-me-text {
+      margin-top: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #d9534f;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+<div class="gift-box-container">
+  <img id="gift-box" src="image/icons8-gift-96.png" alt="Gift Box" class="gift-box">
+  <p class="click-me-text">Curious about what's inside? 🤔 Then open the gift box! 🎁✨</p>
+</div>
+
+<script>
+  document.getElementById('gift-box').addEventListener('click', function() {
+    const giftBox = document.getElementById('gift-box');
+
+    // 停止弹跳动画
+    giftBox.style.animation = 'none';
+
+    // 设置新的图片为打开的礼盒
+    giftBox.src = 'image/icons8-opened-gift-96.png';
+
+    // 添加打开的礼盒动画
+    giftBox.classList.add('opened-gift');
+
+    // 监听动画结束事件来触发跳转
+    giftBox.addEventListener('transitionend', function() {
+      // 跳转到新页面
+      window.location.href = 'Question0.html'; // 请将此 URL 替换为你想跳转的页面
+    });
+  });
+</script>
+</body>
+</html>

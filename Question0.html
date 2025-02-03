@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Happy Birthday!!! :)</title>
+  <link rel="shortcut icon" type="image/png" href="image/favicon.png" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      height: 100vh;
+      font-family: "Comic Sans MS", cursive, sans-serif;
+      background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+    }
+
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .question-container {
+      text-align: center;
+      background: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+      transition: transform 0.3s;
+    }
+
+    .question-container:hover {
+      transform: scale(1.05);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      position: relative;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 12px 25px;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+      border-radius: 30px;
+      background: linear-gradient(135deg, #ff758c, #ff7eb3);
+      color: white;
+      font-weight: bold;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+      background: linear-gradient(135deg, #ff5c8a, #ff749e);
+      transform: scale(1.1);
+    }
+
+    .mouse-gif {
+      position: absolute;
+      width: 120px;
+      height: 120px;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: transform 0.3s ease;
+      display: none;
+    }
+
+    .btn-clicked {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+  </style>
+</head>
+<body>
+
+<!-- 第一题 -->
+<div class="question-container" id="first-question">
+  <h2>Want to see more? 🤔 Well, answer a few questions first! 😜</h2>
+  <div class="button-container">
+    <a href="Question1.html" id="yes-btn-link">
+      <button id="yes-btn">Yes</button>
+    </a>
+    <button id="no-btn">No</button>
+  </div>
+</div>
+
+<!-- 嘲讽表情包 -->
+<img id="mouse-gif" class="mouse-gif" src="image/mouse.gif" alt="mouse gif">
+
+<script>
+  const yesBtn = document.getElementById('yes-btn');
+  const noBtn = document.getElementById('no-btn');
+  const mouseGif = document.getElementById('mouse-gif');
+  const yesBtnLink = document.getElementById('yes-btn-link');
+
+  let isFirstMove = true;
+  let moveCount = 0;
+
+  function showMouseGif() {
+    mouseGif.style.display = 'block';
+    setTimeout(() => {
+      mouseGif.style.transform = 'translate(-50%, -50%) scale(1.5)';
+    }, 100);
+  }
+
+  noBtn.addEventListener('mouseover', function() {
+    if (isFirstMove) {
+      noBtn.style.position = 'fixed';
+      isFirstMove = false;
+    }
+
+    const maxX = window.innerWidth - noBtn.offsetWidth;
+    const maxY = window.innerHeight - noBtn.offsetHeight;
+    const newX = Math.random() * maxX;
+    const newY = Math.random() * maxY;
+
+    noBtn.style.left = newX + 'px';
+    noBtn.style.top = newY + 'px';
+
+    moveCount++;
+
+    if (moveCount === 3) {
+      showMouseGif();
+    }
+  });
+
+  noBtn.addEventListener('mousemove', function() {
+    if (moveCount >= 3) {
+      mouseGif.style.left = noBtn.offsetLeft + 'px';
+      mouseGif.style.top = noBtn.offsetTop + 'px';
+    }
+  });
+
+  yesBtn.addEventListener('click', function(event) {
+    event.preventDefault();
+    yesBtn.classList.add('btn-clicked');
+    setTimeout(() => {
+      window.location.href = yesBtnLink.href;
+    }, 500);
+  });
+</script>
+
+</body>
+</html>
