@@ -296,10 +296,14 @@ const animationTimeline = () => {
   // tl.timeScale(2);
 
   // Restart Animation on click
-  const replyBtn = document.getElementById("replay");
-  replyBtn.addEventListener("click", () => {
-    tl.restart();
-  });
+  // const replyBtn = document.getElementById("replay");
+  // replyBtn.addEventListener("click", () => {
+  //   tl.restart();
+  // });
+    const replyBtn = document.getElementById("replay");
+    replyBtn.addEventListener("click", () => {
+        window.location.href = "../game/index.html"; // 将 "other.html" 替换为你希望跳转的页面地址
+    });
 
 
 };

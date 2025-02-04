@@ -31,24 +31,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;last_opened_file_path&quot;: &quot;F:/WebStorm_project/wq_ulti/image&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "DefaultHtmlFileTemplate": "HTML File",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "master",
+    "last_opened_file_path": "F:/WebStorm_project/wq_ulti/game/game_images",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="F:\WebStorm_project\wq_ulti\game\game_images" />
+      <recent name="F:\WebStorm_project\wq_ulti\game" />
       <recent name="F:\WebStorm_project\wq_ulti\image" />
       <recent name="F:\WebStorm_project\wq_ulti\wq\img" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="F:\WebStorm_project\wq_ulti\game" />
+      <recent name="F:\WebStorm_project\wq_ulti\game\game_images" />
     </key>
   </component>
   <component name="SharedIndexes">
@@ -70,6 +76,8 @@
       <workItem from="1738481471060" duration="811000" />
       <workItem from="1738498618590" duration="610000" />
       <workItem from="1738572269433" duration="2327000" />
+      <workItem from="1738578402606" duration="17000" />
+      <workItem from="1738659982388" duration="3240000" />
     </task>
     <servers />
   </component>

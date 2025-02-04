@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小猪猪🐖的逃亡之旅</title>
+    <link rel="shortcut icon" type="image/png" href="game_images/favicon.png" />
+    <style>
+        /* 全局重置及基本样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
+            user-select: none;
+            padding: 20px;
+        }
+
+        /* 游戏容器 */
+        .game-container {
+            position: relative;
+            width: 800px;
+            max-width: 100%;
+        }
+
+        /* 游戏区域 */
+        .game {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            overflow: hidden;
+            z-index: 999;
+        }
+
+        /* 地面 */
+        .ground {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background: #8d6e63;
+        }
+
+        /* 主角 豆包 */
+        .pig {
+            position: absolute;
+            left: 50px;
+            bottom: 20px;
+            width: 40px;
+            height: 40px;
+        }
+
+        /* 障碍物 */
+        .obstacle {
+            position: absolute;
+        }
+
+        /* 计分板 */
+        .scoreboard {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 16px;
+            color: #333;
+            z-index: 2;
+        }
+
+        /* 游戏介绍覆盖层 */
+        .intro-overlay {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            background: linear-gradient(45deg, #ff9a9e, #fad0c4, #fad0c4, #ffdde1);
+            color: #000000;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .intro-content {
+            max-width: 700px;
+            width: 100%;
+        }
+        .intro-overlay h1 {
+            margin-bottom: 20px;
+            font-size: 32px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+            color: #eda83e;
+        }
+        .intro-overlay p,
+        .intro-overlay ul {
+            font-size: 16px;
+            line-height: 1.6;
+            margin: 15px 0;
+            text-align: justify;
+        }
+        .intro-overlay ul {
+            list-style: none;
+            text-align: left;
+            padding-left: 20px;
+        }
+        .intro-overlay ul li {
+            margin: 10px 0;
+            padding-left: 25px;
+            position: relative;
+        }
+        .intro-overlay ul li:before {
+            content: '🌟';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .intro-overlay button {
+            margin-top: 25px;
+            padding: 12px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            background: #ff9800;
+            color: #fff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+        }
+        .intro-overlay button:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+        @media (max-width: 600px) {
+            .intro-overlay {
+                padding: 20px;
+            }
+            .intro-overlay h1 {
+                font-size: 24px;
+            }
+            .intro-overlay p,
+            .intro-overlay ul {
+                font-size: 14px;
+            }
+            .intro-overlay button {
+                padding: 10px 20px;
+                font-size: 16px;
+            }
+        }
+
+        /* ========== 彩蛋（胜利）相关样式 ========== */
+
+        /* 烟花效果 */
+        .firework {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,223,0,0.3) 10%, transparent 20%);
+            animation: explode 1s ease-out forwards;
+        }
+
+        /* 胜利覆盖层 */
+        .victory-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 245, 230, 0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.5s ease-out;
+            overflow: hidden;
+            padding: 20px;
+        }
+
+        /* 胜利内容容器 */
+        .victory-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+        }
+
+        /* 单条胜利消息（依次显示） */
+        .victory-message {
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .victory-message.show {
+            opacity: 1;
+        }
+
+        /* 装饰“继续冒险”按钮 */
+        .close-btn {
+            margin-top: 20px;
+            padding: 12px 30px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            background: #ff9800;
+            color: #fff;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 152, 0, 0.3);
+            opacity: 0;
+        }
+        .close-btn.show {
+            opacity: 1;
+        }
+        .close-btn:hover {
+            background: #f57c00;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(255, 152, 0, 0.4);
+        }
+
+        /* 表情及文本样式 */
+        .emoji-bubble {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            animation: float 2s ease-in-out infinite;
+        }
+        .message-text {
+            font-size: 1.5rem;
+            line-height: 1.4;
+            color: #4a4a4a;
+            text-shadow: 1px 1px 2px rgba(255,255,255,0.5);
+        }
+        .highlight {
+            color: #e91e63;
+            font-weight: bold;
+            font-size: 1.8rem;
+        }
+        .freedom {
+            color: #2196f3;
+            font-family: 'Comic Sans MS', cursive;
+            font-size: 2rem;
+        }
+        .final-emoji {
+            font-size: 4rem;
+            display: block;
+        }
+
+        /* ========== 动画定义 ========== */
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(2); opacity: 0; }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+
+        /* ===============================
+       彩蛋：emoji 雪花效果
+    =============================== */
+        .falling-emoji {
+            position: fixed;
+            top: -50px;
+            font-size: 24px; /* 可根据需要调整大小 */
+            pointer-events: none; /* 鼠标穿透 */
+            opacity: 1;
+            /* 动画时长在3～6秒之间随机 */
+            animation: fall linear forwards;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* ===============================
+       新彩蛋：1314 触发的 emoji 漂浮效果
+       使用的 emoji：⭐💫🌟✨
+    =============================== */
+        .falling-emoji-1314 {
+            position: fixed;
+            top: -50px;
+            font-size: 28px; /* 可根据需要调整大小 */
+            pointer-events: none;
+            opacity: 1;
+            /* 默认动画时长由 JS 动态设置 */
+            animation: drift 4s ease-in-out forwards;
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 1;
+            }
+            25% {
+                transform: translateY(25vh) translateX(30px) rotate(45deg);
+                opacity: 0.9;
+            }
+            50% {
+                transform: translateY(50vh) translateX(-30px) rotate(90deg);
+                opacity: 0.8;
+            }
+            75% {
+                transform: translateY(75vh) translateX(30px) rotate(135deg);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(100vh) translateX(0) rotate(180deg);
+                opacity: 0;
+            }
+        }
+
+        /* ===============================
+       彩蛋：键盘输入5201314触发的流星效果
+       显示的 emoji：🌠 和 ☄️
+    =============================== */
+        /* ===============================
+       彩蛋：流星效果（方向：右上往左下）
+       使用 emoji：🌠 和 ☄️
+    =============================== */
+        .shooting-star {
+            position: fixed;
+            font-size: 32px; /* 根据需要调整大小 */
+            pointer-events: none; /* 鼠标穿透 */
+            opacity: 1;
+            animation: shootingStar 1.5s ease-out forwards;
+        }
+
+        @keyframes shootingStar {
+            0% {
+                transform: translate(0, 0) rotate(45deg);
+                opacity: 1;
+            }
+            100% {
+                /* 从当前位置向左下移动：x 方向为负，y 方向为正 */
+                transform: translate(-110vw, 110vh) rotate(45deg);
+                opacity: 0;
+            }
+        }
+
+
+
+
+    </style>
+</head>
+<body>
+<div class="game-container">
+    <div class="game">
+        <!-- 游戏背景介绍覆盖层 -->
+        <div id="introOverlay" class="intro-overlay">
+            <div class="intro-content">
+                <h1>小猪猪🐖的逃亡之旅</h1>
+                <p>在一个遥远的乡村农场里，住着一只活泼机灵的小猪猪。它刚刚成年，开始思考"猪生"的终极问题——难道我要一辈子待在农场里吃吃睡睡，被农夫照顾？这听起来虽然安逸，但它渴望自由！它梦想着去看看农场外面的世界，去感受未知的冒险与挑战。✨</p>
+                <p>今天，机会终于来了！农夫和狗狗们都去午睡了，栅栏门不知怎么地忘了锁紧，小猪猪内心的小火苗瞬间燃烧了起来—— 是时候逃出去看看世界了！</p>
+                <p>可惜，自由之路并不轻松，前方满是挑战：</p>
+                <ul>
+                    <li>矮篱笆 —— 需要奋力一跃才能跨过去！</li>
+                    <li>干草垛 —— 稍不注意就会被绊倒，摔个四脚朝天！</li>
+                    <li>好奇的牧羊犬 —— 它可不是吃素的，要是被发现，小猪猪就得原地返回农场！</li>
+                    <li>神秘的水坑 —— 传闻踩进去就会陷进去半天，等你爬出来太阳都下山了！</li>
+                </ul>
+                <p>你需要帮助这只小猪猪一路跳跃，灵活避开障碍，冲向那扇通往未知世界的大门！ 🏃‍♂️🐷💨</p>
+                <button id="startButton">开始游戏</button>
+            </div>
+        </div>
+
+        <!-- 计分板 -->
+        <div class="scoreboard">
+            <span id="highScore">历史最高分: 0</span>
+            <span id="currentScore" style="margin-left: 20px;">实时分数: 0</span>
+        </div>
+        <!-- 主角 豆包 -->
+        <img class="pig" id="pig" src="game_images/pig.svg" alt="豆包">
+        <!-- 地面 -->
+        <div class="ground"></div>
+    </div>
+</div>
+<audio id="bgm" autoplay loop>
+    <source src="pig.mp3" type="audio/mpeg">
+</audio>
+
+<script>
+    /* --------------------------
+     全局变量及初始化
+  -------------------------- */
+    let gameState = "notStarted"; // 游戏状态："notStarted" 未开始, "running" 进行中, "failed" 失败, "won" 获胜
+
+    const pig = document.getElementById('pig');
+    const highScoreDisplay = document.getElementById('highScore');
+    const currentScoreDisplay = document.getElementById('currentScore');
+    const gameArea = document.querySelector('.game');
+    const introOverlay = document.getElementById('introOverlay');
+    const startButton = document.getElementById('startButton');
+
+    let isJumping = false;
+    let jumpHeight = 0;
+    let score = 0;
+    const winScore = 520;
+    let scoreInterval;
+
+    // 从 localStorage 获取历史最高分
+    let highScore = parseInt(localStorage.getItem('highScore')) || 0;
+    highScoreDisplay.textContent = "历史最高分: " + highScore;
+
+    // 障碍物类型及属性
+    const obstacleTypes = [
+        { type: 'fence', label: '矮篱笆', src: 'game_images/fence.svg', width: 20, height: 40, collisionThreshold: 60 },
+        { type: 'wall', label: '干草垛', src: 'game_images/wall.svg', width: 30, height: 30, collisionThreshold: 50 },
+        { type: 'dog', label: '好奇的牧羊犬', src: 'game_images/dog.svg', width: 40, height: 40, collisionThreshold: 60 },
+        { type: 'water', label: '神秘的水坑', src: 'game_images/water.svg', width: 50, height: 20, collisionThreshold: 40 }
+    ];
+
+    /* --------------------------
+       游戏启动函数
+    -------------------------- */
+    function startGame() {
+        gameState = "running";
+        introOverlay.style.display = "none";  // 隐藏介绍覆盖层
+
+        // 分数计时器，每 100 毫秒更新一次分数
+        scoreInterval = setInterval(() => {
+            if (gameState !== "running") return;
+            score++;
+            currentScoreDisplay.textContent = "实时分数: " + score;
+            if(score >= winScore) {
+                winGame();
+            }
+        }, 100);
+
+        createObstacle();
+    }
+
+    startButton.addEventListener('click', startGame);
+
+    /* --------------------------
+       豆包跳跃函数
+    -------------------------- */
+    function jump() {
+        if (isJumping) return;
+        isJumping = true;
+        let upInterval = setInterval(() => {
+            if (jumpHeight >= 100) { // 达到最高点后开始下落
+                clearInterval(upInterval);
+                let downInterval = setInterval(() => {
+                    if (jumpHeight <= 0) {
+                        clearInterval(downInterval);
+                        isJumping = false;
+                    }
+                    jumpHeight -= 5;
+                    pig.style.bottom = (20 + jumpHeight) + 'px';
+                }, 20);
+            } else {
+                jumpHeight += 5;
+                pig.style.bottom = (20 + jumpHeight) + 'px';
+            }
+        }, 20);
+    }
+
+    document.addEventListener('keydown', function(event) {
+        if ((event.code === 'Space' || event.key === ' ') && gameState === "running") {
+            jump();
+        }
+    });
+
+    /* --------------------------
+       障碍物生成及运动
+    -------------------------- */
+    function createObstacle() {
+        if(gameState !== "running") return;
+
+        let randomIndex = Math.floor(Math.random() * obstacleTypes.length);
+        let obstacleType = obstacleTypes[randomIndex];
+
+        let obstacle = document.createElement('img');
+        obstacle.classList.add('obstacle');
+        obstacle.src = obstacleType.src;
+        obstacle.style.width = obstacleType.width + 'px';
+        obstacle.style.height = obstacleType.height + 'px';
+        obstacle.style.left = '800px';
+
+        // 水坑放在地面，其它障碍物与地面接触
+        obstacle.style.bottom = obstacleType.type === 'water' ? '0px' : '20px';
+
+        // 保存属性到 dataset 便于碰撞检测
+        obstacle.dataset.type = obstacleType.type;
+        obstacle.dataset.collisionThreshold = obstacleType.collisionThreshold;
+        obstacle.dataset.width = obstacleType.width;
+
+        gameArea.appendChild(obstacle);
+
+        let obstaclePosition = 800;
+        let obstacleTimer = setInterval(() => {
+            if(gameState !== "running") {
+                clearInterval(obstacleTimer);
+                if(obstacle.parentNode) obstacle.remove();
+                return;
+            }
+            obstaclePosition -= 5;
+            obstacle.style.left = obstaclePosition + 'px';
+
+            const pigX = 50;
+            const pigWidth = 40;
+            let obstacleWidth = parseInt(obstacle.dataset.width);
+            if(obstaclePosition < pigX + pigWidth && (obstaclePosition + obstacleWidth) > pigX) {
+                let pigBottom = 20 + jumpHeight;
+                let collisionThreshold = parseInt(obstacle.dataset.collisionThreshold);
+                if(pigBottom < collisionThreshold) {
+                    clearInterval(obstacleTimer);
+                    gameOver(obstacleType);
+                }
+            }
+            if(obstaclePosition < -obstacleWidth) {
+                clearInterval(obstacleTimer);
+                obstacle.remove();
+            }
+        }, 20);
+
+        let randomTime = Math.random() * 3000 + 1500;
+        setTimeout(createObstacle, randomTime);
+    }
+
+    /* --------------------------
+       游戏失败处理
+    -------------------------- */
+    function gameOver(obstacle) {
+        if(gameState !== "running") return;
+        gameState = "failed";
+        clearInterval(scoreInterval);
+        if(score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+            highScoreDisplay.textContent = "历史最高分: " + highScore;
+        }
+        alert("哎呀，被" + obstacle.label + "拦住了！小猪猪只好回到农场了...");
+        location.reload();
+    }
+
+    /* --------------------------
+       游戏胜利处理（顺序显示消息）
+    -------------------------- */
+    function winGame() {
+        if(gameState !== "running") return;
+        gameState = "won";
+        clearInterval(scoreInterval);
+
+        // 更新最高分
+        if(score > highScore) {
+            highScore = score;
+            localStorage.setItem('highScore', highScore);
+            highScoreDisplay.textContent = "历史最高分: " + highScore;
+        }
+
+        // 创建胜利覆盖层
+        const overlay = document.createElement('div');
+        overlay.className = 'victory-overlay';
+        overlay.innerHTML = `
+    <div class="firework"></div>
+    <div id="victoryContent" class="victory-content"></div>
+  `;
+        gameArea.appendChild(overlay);
+
+        // 定义要依次显示的消息内容（HTML 格式）
+        const victoryMessages = [
+            `<div class="emoji-bubble">🤨</div><p class="message-text">等等……这只猪猪怎么这么眼熟？</p>`,
+            `<div class="emoji-bubble">🐷</div><p class="message-text">对了，这只小猪猪<br><span class="highlight">不就是你吗？</span></p>`,
+            `<div class="emoji-bubble">✨</div><p class="message-text">哈哈哈哈哈，成功逃亡！<br>无论去哪里，愿你都保持<br><span class="freedom">自由与快乐！</span></p>`,
+            `<div class="message-text">你以为这就完了？哈哈哈哈，真正的彩蛋可不会轻易被发现哦！😜🎊🔎</div>`,
+            `<div class="final-emoji">💖🎉</div>`
+        ];
+
+        const victoryContent = document.getElementById('victoryContent');
+
+        // 依次显示消息的函数
+        function showVictoryMessages(index) {
+            if(index >= victoryMessages.length) {
+                // 全部消息显示完后，1秒后显示按钮
+                setTimeout(() => {
+                    showVictoryButton();
+                }, 1000);
+                return;
+            }
+
+            // 清空容器，并创建一条消息元素
+            victoryContent.innerHTML = '';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'victory-message';
+            messageDiv.innerHTML = victoryMessages[index];
+            victoryContent.appendChild(messageDiv);
+
+            // 短暂延时后添加显示样式（触发 CSS 渐显效果）
+            setTimeout(() => {
+                messageDiv.classList.add('show');
+            }, 50);
+
+            // 保持 2 秒后开始淡出当前消息，再显示下一条
+            setTimeout(() => {
+                messageDiv.classList.remove('show');
+                setTimeout(() => {
+                    showVictoryMessages(index + 1);
+                }, 500); // 等待淡出效果结束（0.5秒）
+            }, 2000);
+        }
+
+        // 显示按钮函数，点击后重新加载页面
+        function showVictoryButton() {
+            victoryContent.innerHTML = ''; // 清空容器
+            const btn = document.createElement('button');
+            btn.className = 'close-btn';
+            btn.textContent = '点击继续冒险 →';
+            btn.onclick = () => {
+                // 点击按钮后刷新页面重新开始游戏
+                location.reload();
+            };
+            victoryContent.appendChild(btn);
+            setTimeout(() => {
+                btn.classList.add('show');
+            }, 50);
+        }
+
+        // 开始依次显示消息
+        showVictoryMessages(0);
+    }
+
+
+    // -------------------------------
+    // 彩蛋：检测输入520，触发 emoji 雪花效果
+    // -------------------------------
+    (function() {
+        let secretSequence = ''; // 用于记录输入序列
+        const secretCode = '520';
+        const emojis = ["💓", "💗", "💖", "💕"];
+
+        // 监听全局键盘按下事件
+        document.addEventListener('keydown', function(e) {
+            // 记录数字键，若非数字键也会添加（你也可以过滤，只允许数字）
+            secretSequence += e.key;
+            // 保持序列不超过 secretCode 长度（也可保留更多，但这里只需检测末尾）
+            if (secretSequence.length > secretCode.length) {
+                secretSequence = secretSequence.slice(-secretCode.length);
+            }
+            if (secretSequence === secretCode) {
+                triggerEmojiSnow();
+                secretSequence = ''; // 重置序列，避免重复触发
+            }
+        });
+
+        // 触发 emoji 雪花效果
+        function triggerEmojiSnow() {
+            // 一次生成 30 个 emoji 雪花，间隔一定时间
+            for (let i = 0; i < 30; i++) {
+                setTimeout(createFallingEmoji, i * 200);
+            }
+        }
+
+        // 创建单个下落 emoji
+        function createFallingEmoji() {
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            const emojiElem = document.createElement('div');
+            emojiElem.textContent = emoji;
+            emojiElem.className = 'falling-emoji';
+            // 随机左右位置
+            emojiElem.style.left = Math.random() * window.innerWidth + 'px';
+            // 随机设置动画时长 3 ~ 6 秒
+            const duration = (Math.random() * 3 + 3).toFixed(2) + 's';
+            emojiElem.style.animationDuration = duration;
+            // 随机设置一点延时，使得下落效果更自然
+            emojiElem.style.animationDelay = Math.random() * 1 + 's';
+            // 将 emoji 添加到 body（或添加到 .game 区域，根据需要）
+            document.body.appendChild(emojiElem);
+            // 动画结束后移除元素
+            emojiElem.addEventListener('animationend', function() {
+                emojiElem.remove();
+            });
+        }
+    })();
+
+    // -------------------------------
+    // 彩蛋：检测输入1314，触发“⭐💫🌟✨”的 emoji 漂浮效果
+    // -------------------------------
+    (function() {
+        let secretSequence = ''; // 用于记录按键序列
+        const secretCode = '1314';
+        const emojis = ["⭐", "💫", "🌟", "✨"];
+
+        document.addEventListener('keydown', function(e) {
+            secretSequence += e.key;
+            // 保持序列长度不超过目标序列
+            if (secretSequence.length > secretCode.length) {
+                secretSequence = secretSequence.slice(-secretCode.length);
+            }
+            if (secretSequence === secretCode) {
+                triggerEmojiDrift();
+                secretSequence = ''; // 重置序列，避免重复触发
+            }
+        });
+
+        // 触发漂浮效果：分批生成 20 个 emoji
+        function triggerEmojiDrift() {
+            for (let i = 0; i < 20; i++) {
+                setTimeout(createFallingEmoji, i * 150);
+            }
+        }
+
+        // 创建单个下落（漂浮）的 emoji 元素
+        function createFallingEmoji() {
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            const emojiElem = document.createElement('div');
+            emojiElem.textContent = emoji;
+            emojiElem.className = 'falling-emoji-1314';
+            // 随机横向位置
+            emojiElem.style.left = Math.random() * window.innerWidth + 'px';
+            // 随机设置动画时长 3～5 秒
+            const duration = (Math.random() * 2 + 3).toFixed(2) + 's';
+            emojiElem.style.animationDuration = duration;
+            // 随机设置一点延时
+            emojiElem.style.animationDelay = Math.random() + 's';
+            document.body.appendChild(emojiElem);
+            // 动画结束后移除该元素
+            emojiElem.addEventListener('animationend', function() {
+                emojiElem.remove();
+            });
+        }
+    })();
+
+    // -------------------------------
+    // 彩蛋：检测输入 "5201314"，触发流星效果（从右上往左下飞）
+    // -------------------------------
+    (function() {
+        let secretSequence = ''; // 用于记录按键序列
+        const secretCode = '521';
+        const emojis = ["🌠", "☄️"];
+
+        // 监听全局键盘按键
+        document.addEventListener('keydown', function(e) {
+            secretSequence += e.key;
+            // 保持序列长度不超过目标序列长度
+            if (secretSequence.length > secretCode.length) {
+                secretSequence = secretSequence.slice(-secretCode.length);
+            }
+            if (secretSequence === secretCode) {
+                triggerShootingStars();
+                secretSequence = ''; // 重置序列，避免重复触发
+            }
+        });
+
+        // 触发流星效果：分批生成 5 个流星
+        function triggerShootingStars() {
+            for (let i = 0; i < 10; i++) {
+                setTimeout(createShootingStar, i * 300);
+            }
+        }
+
+        // 创建单个流星 emoji 元素
+        function createShootingStar() {
+            const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+            const starElem = document.createElement('div');
+            starElem.textContent = emoji;
+            starElem.className = 'shooting-star';
+            // 设置流星起始位置在屏幕右上区域（left 值在 80vw～100vw，top 值在 0～10vh）
+            starElem.style.left = (80 + Math.random() * 20) + 'vw';
+            starElem.style.top = (Math.random() * 10) + 'vh';
+            // 随机设置动画时长（约 1.5 ～ 2 秒）
+            const duration = (Math.random() * 0.5 + 1.5).toFixed(2) + 's';
+            starElem.style.animationDuration = duration;
+            document.body.appendChild(starElem);
+            // 动画结束后移除元素
+            starElem.addEventListener('animationend', function() {
+                starElem.remove();
+            });
+        }
+    })();
+
+    !(function () {
+        // ===== 创建背景画布（最底层） =====
+        var bgCanvas = document.createElement("canvas");
+        document.body.appendChild(bgCanvas);
+        bgCanvas.style.position = "fixed";
+        bgCanvas.style.left = "0";
+        bgCanvas.style.top = "0";
+        bgCanvas.style.zIndex = "0";
+        var bgCtx = bgCanvas.getContext("2d");
+
+        // ===== 创建烟花画布（最顶层） =====
+        var fireworksCanvas = document.createElement("canvas");
+        document.body.appendChild(fireworksCanvas);
+        fireworksCanvas.style.position = "fixed";
+        fireworksCanvas.style.left = "0";
+        fireworksCanvas.style.top = "0";
+        fireworksCanvas.style.zIndex = "9999"; // 确保烟花在最上层
+        fireworksCanvas.style.pointerEvents = "none"; // 添加这一行，让画布不阻挡点击
+        var context = fireworksCanvas.getContext("2d");
+
+        // ===== 创建用于文字烟花的辅助画布（保留原有逻辑，可选） =====
+        var textCanvas = document.createElement("canvas");
+        textCanvas.width = 1000;
+        textCanvas.height = 300;
+        var textctx = textCanvas.getContext("2d");
+        textctx.fillStyle = "#000000";
+        textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+
+        // ===== 尺寸调整 =====
+        function resizeCanvas() {
+            // 背景画布
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            // 绘制渐变背景
+            var gradient = bgCtx.createLinearGradient(0, 0, bgCanvas.width, bgCanvas.height);
+            gradient.addColorStop(0, "#f5f7fa");
+            gradient.addColorStop(1, "#c3cfe2");
+            bgCtx.fillStyle = gradient;
+            bgCtx.fillRect(0, 0, bgCanvas.width, bgCanvas.height);
+
+            // 烟花画布
+            fireworksCanvas.width = window.innerWidth;
+            fireworksCanvas.height = window.innerHeight;
+            clearFireworksCanvas();
+        }
+        function clearFireworksCanvas() {
+            context.clearRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+        }
+        resizeCanvas();
+        window.addEventListener("resize", resizeCanvas);
+
+        // ===== 移除鼠标点击及自动触发烟花 =====
+        // 不再监听 mousedown 事件，也不在 tick() 中自动调用 createFireworks()
+
+        // ===== 烟花粒子相关变量 =====
+        var particles = [];
+
+        // ===== 创建烟花（烟花粒子生成） =====
+        // 参数 text 可选（若传入非空则走文字烟花逻辑），这里主要使用非文字分支
+        function createFireworks(x, y, text = "") {
+            var hue = Math.random() * 360;
+            var hueVariance = 30;
+            function setupColors(p) {
+                p.hue =
+                    Math.floor(
+                        Math.random() * ((hue + hueVariance) - (hue - hueVariance))
+                    ) + (hue - hueVariance);
+                p.brightness = Math.floor(Math.random() * 21) + 50;
+                p.alpha = (Math.floor(Math.random() * 61) + 40) / 100;
+            }
+            if (text != "") {
+                // 文字烟花分支（保留原逻辑，可选）
+                var gap = 6;
+                var fontSize = 120;
+                textctx.font = fontSize + "px Verdana";
+                textctx.fillStyle = "#ffffff";
+                var textWidth = textctx.measureText(text).width;
+                var textHeight = fontSize;
+                textctx.fillText(text, 0, textHeight);
+                var imgData = textctx.getImageData(0, 0, textWidth, textHeight * 1.2);
+                textctx.fillStyle = "#000000";
+                textctx.fillRect(0, 0, textCanvas.width, textCanvas.height);
+                for (var h = 0; h < textHeight * 1.2; h += gap) {
+                    for (var w = 0; w < textWidth; w += gap) {
+                        var position = (textWidth * h + w) * 4;
+                        var r = imgData.data[position],
+                            g = imgData.data[position + 1],
+                            b = imgData.data[position + 2],
+                            a = imgData.data[position + 3];
+                        if (r + g + b == 0) continue;
+                        var p = {};
+                        p.x = x;
+                        p.y = y;
+                        p.fx = x + w - textWidth / 2;
+                        p.fy = y + h - textHeight / 2;
+                        p.size = Math.floor(Math.random() * 2) + 1;
+                        p.speed = 1;
+                        setupColors(p);
+                        particles.push(p);
+                    }
+                }
+            } else {
+                // 普通烟花分支
+                var count = 100;
+                for (var i = 0; i < count; i++) {
+                    // 计算角度
+                    var angle = (360 / count) * i;
+                    var radians = angle * Math.PI / 180;
+                    var p = {};
+                    p.x = x;
+                    p.y = y;
+                    p.radians = radians;
+                    p.size = Math.random() * 2 + 1;
+                    p.speed = Math.random() * 5 + 0.4;
+                    p.radius = Math.random() * 81 + 50;
+                    p.fx = x + Math.cos(radians) * p.radius;
+                    p.fy = y + Math.sin(radians) * p.radius;
+                    setupColors(p);
+                    particles.push(p);
+                }
+            }
+        }
+
+        // ===== 绘制烟花粒子 =====
+        function drawFireworks() {
+            for (var i = 0; i < particles.length; i++) {
+                var p = particles[i];
+                p.x += (p.fx - p.x) / 10;
+                p.y += (p.fy - p.y) / 10 - (p.alpha - 1) * p.speed;
+                p.alpha -= 0.006;
+                if (p.alpha <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                    continue;
+                }
+                context.beginPath();
+                context.arc(p.x, p.y, p.size, 0, Math.PI * 2, false);
+                context.closePath();
+                context.fillStyle =
+                    "hsla(" +
+                    p.hue +
+                    ",100%," +
+                    p.brightness +
+                    "%," +
+                    p.alpha +
+                    ")";
+                context.fill();
+            }
+        }
+
+        // ===== 动画循环 =====
+        function tick() {
+            // 使用 composite 方式实现淡出效果
+            context.globalCompositeOperation = "destination-out";
+            context.fillStyle = "rgba(0,0,0,0.1)";
+            context.fillRect(0, 0, fireworksCanvas.width, fireworksCanvas.height);
+            context.globalCompositeOperation = "lighter";
+            drawFireworks();
+            requestAnimationFrame(tick);
+        }
+        tick();
+
+        // ===== 仅通过键盘输入 "555" 触发烟花 =====
+        let secretSequence = "";
+        const secretCode = "555";
+        document.addEventListener("keydown", function (e) {
+            secretSequence += e.key;
+            if (secretSequence.length > secretCode.length) {
+                secretSequence = secretSequence.slice(-secretCode.length);
+            }
+            if (secretSequence === secretCode) {
+                // 触发烟花：在烟花画布上随机位置产生烟花效果
+                // 触发烟花：一次性放出5个烟花（可以根据需要调整数量）
+                for (let i = 0; i < 10; i++) {
+                    createFireworks(
+                        Math.random() * fireworksCanvas.width,
+                        Math.random() * fireworksCanvas.height
+                    );
+                }
+                secretSequence = "";
+            }
+        });
+    })();
+
+    document.body.addEventListener("click", function() {
+        // 获取 audio 元素
+        const audio = document.getElementById("bgm");
+        // 确保开启循环播放
+        audio.loop = true;
+        // 如果当前暂停，则开始播放
+        if (audio.paused) {
+            audio.play().catch((err) => {
+                console.error("播放出错:", err);
+            });
+        }
+    });
+
+
+
+</script>
+</body>
+</html>
