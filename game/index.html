@@ -424,7 +424,7 @@
     let isJumping = false;
     let jumpHeight = 0;
     let score = 0;
-    const winScore = 520;
+    const winScore = 600;
     let scoreInterval;
 
     // 从 localStorage 获取历史最高分
@@ -638,7 +638,7 @@
             btn.textContent = '点击继续冒险 →';
             btn.onclick = () => {
                 // 点击按钮后刷新页面重新开始游戏
-                location.reload();
+                location.href = 'story.html';
             };
             victoryContent.appendChild(btn);
             setTimeout(() => {

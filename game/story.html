@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>跳舞小人的秘密花园</title>
+  <style>
+    /* ========== 全局样式 ========== */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      /* 渐变背景 + 背景动画 */
+      background: linear-gradient(120deg, #a1c4fd, #c2e9fb);
+      background-size: 400% 400%;
+      animation: gradientBG 15s ease infinite;
+      font-family: "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif;
+      line-height: 1.6;
+      color: #333;
+      overflow-x: hidden; /* 避免动画时水平滚动条 */
+    }
+    @keyframes gradientBG {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px 30px;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+      position: relative;
+      animation: fadeInContainer 1s ease forwards;
+    }
+    @keyframes fadeInContainer {
+      0% {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ========== 标题与文字动画 ========== */
+    h1, h2, h3 {
+      text-align: center;
+      margin-bottom: 0.8em;
+      opacity: 0;           /* 初始透明 */
+      animation: fadeInUp 1s ease forwards;
+    }
+    h1 {
+      font-size: 2em;
+      margin-top: 0;
+      animation-delay: 0.2s;
+    }
+    h2 {
+      animation-delay: 0.3s;
+    }
+    h3 {
+      animation-delay: 0.4s;
+    }
+
+    /* fadeInUp 动画：从下向上淡入 */
+    @keyframes fadeInUp {
+      0% {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* 段落文字（统一加淡入动画 + 首行缩进） */
+    p {
+      text-indent: 2em; /* 首行缩进两格 */
+      margin: 1em 0;
+      opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    .story-section {
+      margin-bottom: 2em;
+    }
+
+    /* 按顺序让每个段落依次出现（累加延时） */
+    .container p:nth-of-type(1) { animation-delay: 0.3s; }
+    .container p:nth-of-type(2) { animation-delay: 0.4s; }
+    .container p:nth-of-type(3) { animation-delay: 0.5s; }
+    .container p:nth-of-type(4) { animation-delay: 0.6s; }
+    .container p:nth-of-type(5) { animation-delay: 0.7s; }
+    .container p:nth-of-type(6) { animation-delay: 0.8s; }
+    .container p:nth-of-type(7) { animation-delay: 0.9s; }
+    .container p:nth-of-type(8) { animation-delay: 1.0s; }
+    .container p:nth-of-type(9) { animation-delay: 1.1s; }
+    .container p:nth-of-type(10) { animation-delay: 1.2s; }
+
+    /* ========== 舞蹈 Emoji 样式 ========== */
+    .dance-emojis {
+      text-align: center;
+      font-size: 1.2em;
+      line-height: 1.8;
+      margin: 1em 0;
+    }
+    /* 避免舞蹈行也有缩进，重置 p 的缩进 */
+    .dance-emojis p {
+      text-indent: 0;
+      margin: 0.5em 0;
+      opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+    }
+
+    /* 让每个 Emoji 跳舞 */
+    .dance-emoji {
+      display: inline-block;
+      animation: dancing 0.8s ease-in-out infinite alternate;
+    }
+    @keyframes dancing {
+      0% {
+        transform: translateY(0) rotate(0);
+      }
+      50% {
+        transform: translateY(-8px) rotate(-5deg);
+      }
+      100% {
+        transform: translateY(0) rotate(5deg);
+      }
+    }
+
+    /* 为每组4个 Emoji 加一个容器，组内贴紧，组与组之间留一点空隙 */
+    .emoji-group {
+      display: inline-block;
+      margin: 0 0.6em; /* 调整组与组之间的间距 */
+    }
+
+    /* ========== 页脚 ========== */
+    .footer {
+      text-align: center;
+      margin-top: 2em;
+      font-size: 0.9em;
+      color: #666;
+      opacity: 0;
+      animation: fadeInUp 1s ease forwards;
+      animation-delay: 1s;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>跳舞小人的秘密花园</h1>
+
+  <!-- 开场描述 -->
+  <div class="story-section">
+    <p>在遥远的群星之下，有一座被遗忘的花园，名为 <strong>跳舞小人的秘密花园</strong>。据说，每当夜幕降临，月光洒落在鹅卵石小径上，一群神奇的小人便会悄然现身，围绕着花坛翩然起舞。</p>
+    <p>他们的舞步独特而神秘，时而旋转，时而跳跃，每四个一组，动作整齐划一。传说，只有真正有缘的人，才能解开他们所诉说的秘密。</p>
+  </div>
+
+  <!-- 命运的相遇 -->
+  <h2>命运的相遇</h2>
+  <div class="story-section">
+    <p>一天夜晚，一个旅人悄然走入花园。他身披长袍，金色的发丝在夜风中微微扬起，眼中闪烁着探寻未知的光芒。</p>
+    <p>花园的守护者，年轻的魔法学徒 <strong>尤伊（Yui）</strong>，正坐在一棵开满月光花的树下，凝视着跳舞的小人。见旅人靠近，她微微皱眉：“这座花园不属于任何王国，你为何而来？”</p>
+    <p>旅人微笑着点头致意，轻声说道：“我是欧洛（Oro），听闻这座花园的传说，想亲眼看看这些神秘的小人。”</p>
+    <p>尤伊打量着他，指了指正在跳舞的小人：“他们每晚都会起舞，你看得出什么吗？”</p>
+    <p>欧洛望向那些跳舞的小人，目光流露出深思。他注意到，这些小人总是四个一组，动作重复而有规律。片刻后，他缓缓说道：“他们的舞步……不像是单纯的嬉戏，更像是某种……讯息。”</p>
+    <p>尤伊一愣，低头看着他们的舞蹈，轻声念出了他们的动作：</p>
+
+    <!-- 四行，每行16个emoji，分为4组，每组4个，组内贴紧，组之间留空隙 -->
+    <div class="dance-emojis">
+      <!-- 行1（16个Emoji = 4组 x 4个） -->
+      <p>
+          <span class="emoji-group">
+            <span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">💃</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+      </p>
+
+      <!-- 行2 -->
+      <p>
+          <span class="emoji-group">
+            <span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">💃</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+      </p>
+
+      <!-- 行3 -->
+      <p>
+          <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span>
+          </span>
+      </p>
+
+      <!-- 行4 -->
+      <p>
+          <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">💃</span><span class="dance-emoji">💃</span>
+          </span>
+        <span class="emoji-group">
+            <span class="dance-emoji">💃</span><span class="dance-emoji">💃</span><span class="dance-emoji">🕺</span><span class="dance-emoji">🕺</span>
+          </span>
+      </p>
+    </div>
+    <p>“他们似乎在重复某种模式……”她喃喃道。</p>
+  </div>
+
+  <!-- 月光下的秘密 -->
+  <h2>月光下的秘密</h2>
+  <div class="story-section">
+    <p>欧洛静静地看了一会儿，嘴角微微扬起：“有意思……他们的舞步仿佛是两种不同的状态，可能代表着某种二元法则。”</p>
+    <p>“二元？”尤伊歪着头。</p>
+    <p>“嗯……在某些古老的魔法书中，万物都可以被‘1’和‘0’表示，就像白昼与黑夜一样。”欧洛轻轻挥了挥手，“或许，这些小人的动作就是某种方式的书写，只是我们需要找到解读它的方法。”</p>
+    <p>尤伊皱着眉头：“那如果他们代表的是数字呢？该怎么解读？”</p>
+    <p>“在旧王国的炼金术中，有一种叫做‘魔法石板’的装置，它可以将数字转换成特定的符文。”欧洛的眼中闪烁着兴奋的光芒，“或许，我们可以试着把这些‘舞步’转化为数字。”</p>
+    <p>尤伊低头看着那些跳舞的小人，脑海中浮现出城镇里古老钟楼上的刻痕——那些人们遗忘的符号，似乎在诉说着某种未被解开的秘密。</p>
+    <p>欧洛站在花园中央，微风轻轻拂过他的衣袖。他凝视着这些跳舞的小人，喃喃说道：</p>
+    <p>“如果这些数字能对应到某种语言，那我们或许可以用一种古老的方式解读它……”</p>
+    <p>尤伊若有所思地点了点头。她低下头，看着那些跳舞的小人，心中浮现出一种奇妙的感觉。也许，她一直以来守护的，并不仅仅是一座美丽的花园，而是一份古老的誓言。</p>
+    <p>当他们终于拼凑出完整的讯息时，欧洛微微一笑，心中莫名浮现出一丝温暖。</p>
+    <p>“原来……他们一直在诉说着这样的祝愿。”</p>
+  </div>
+
+  <!-- 夜色中的微光 -->
+  <h2>夜色中的微光</h2>
+  <div class="story-section">
+    <p>从那天起，尤伊每晚都会来到花园里，站在那群跳舞的小人之间，静静地看着他们翩然起舞。她的心中渐渐生出了一种新的悸动——这不仅仅是魔法的奥秘，更是一种被遗忘的语言。</p>
+    <p>而在花园的另一端，欧洛回头看了一眼，嘴角勾起一抹微笑。</p>
+    <p>“有些秘密，只属于那些愿意倾听的人。”</p>
+    <p>然后，他消失在夜色之中。</p>
+    <p>但尤伊知道，无论时间如何流转，每当夜幕降临，这些跳舞的小人都会继续翩然起舞，将最温柔的祝愿，留给那个愿意解开的有缘人。</p>
+  </div>
+
+  <div class="footer">
+    <p>——完——</p>
+  </div>
+</div>
+</body>
+</html>
