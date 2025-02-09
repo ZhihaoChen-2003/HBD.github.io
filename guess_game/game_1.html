@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>猜一猜</title>
+  <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+      background: #f4f7fa; /* 更干净简洁的背景色 */
+    }
+    .game-container {
+      text-align: center;
+      background-color: #fff;
+      padding: 30px 40px;
+      border-radius: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 500px;
+    }
+    .game-container img {
+      max-width: 80%;
+      height: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transition: transform 0.2s ease;
+    }
+    .game-container img:hover {
+      transform: scale(1.05);
+    }
+    .input-container {
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .input-container input {
+      padding: 12px 20px;
+      font-size: 18px;
+      border: 2px solid #ddd;
+      border-radius: 25px;
+      outline: none;
+      width: 100%;
+      max-width: 300px;
+      margin-bottom: 15px;
+      transition: border 0.3s ease;
+    }
+    .input-container input:focus {
+      border-color: #007bff;
+    }
+    .input-container button {
+      padding: 12px 30px;
+      font-size: 18px;
+      border: none;
+      border-radius: 25px;
+      background-color: #007bff;
+      color: white;
+      cursor: pointer;
+      width: 100%;
+      max-width: 300px;
+      transition: background-color 0.3s ease;
+    }
+    .input-container button:hover {
+      background-color: #0056b3;
+    }
+    .input-container button:active {
+      background-color: #004085;
+    }
+    .taunt-container {
+      margin-top: 20px;
+      position: relative;
+    }
+    .taunt-gif {
+      max-width: 100px;
+      max-height: 100px;
+      border-radius: 10px;
+      object-fit: contain;
+      position: absolute;
+      animation: tauntAnim 2s infinite;
+    }
+    @keyframes tauntAnim {
+      0% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      50% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      100% {
+        opacity: 0;
+        transform: scale(0.5);
+      }
+    }
+    #feedback {
+      font-size: 18px;
+      color: #333;
+      margin-top: 20px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+<div class="game-container">
+  <img id="question-image" src="images/que_1.jpg" alt="Question Image">
+  <div class="input-container">
+    <input type="text" id="user-answer" placeholder="输入你的答案">
+    <button id="submit-button" onclick="revealAnswer()">提交</button>
+  </div>
+  <p id="feedback"></p>
+  <div id="taunt-container"></div>
+</div>
+
+<script>
+  let answerRevealed = false;
+  const gifs = [
+    "images/mouse.gif",
+    "images/mouse.gif",
+    "images/mouse.gif",
+  ];
+
+  function getRandomGifs(count = 3) {
+    const shuffled = [...gifs].sort(() => 0.5 - Math.random());
+    return shuffled.slice(0, count);
+  }
+
+  function getRandomPosition() {
+    const x = Math.random() * 90; // 随机X轴位置，最大90%
+    const y = Math.random() * 80; // 随机Y轴位置，最大80%
+    return { x: `${x}%`, y: `${y}%` };
+  }
+
+  function revealAnswer() {
+    const feedback = document.getElementById('feedback');
+    const tauntContainer = document.getElementById('taunt-container');
+    const submitButton = document.getElementById('submit-button');
+
+    if (!answerRevealed) {
+      document.getElementById('question-image').src = "images/ans_1.jpg";
+      feedback.innerText = "猜错了哈哈哈哈~答案是海绵宝宝！";
+
+      // 清空先前的内容
+      tauntContainer.innerHTML = '';
+
+      // 添加多个随机gif
+      getRandomGifs().forEach(gif => {
+        const img = document.createElement('img');
+        img.className = 'taunt-gif';
+        img.src = gif;
+
+        // 设置随机位置
+        const position = getRandomPosition();
+        img.style.left = position.x;
+        img.style.top = position.y;
+
+        tauntContainer.appendChild(img);
+      });
+
+      submitButton.innerText = "下一个问题";
+      submitButton.onclick = () => window.location.href = "game_2.html";
+      answerRevealed = true;
+    }
+  }
+</script>
+</body>
+</html>

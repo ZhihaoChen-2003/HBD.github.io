@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>猜一猜</title>
+  <link rel="shortcut icon" type="image/png" href="images/favicon.png" />
+  <style>
+    /* Global Reset */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body and Background */
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: linear-gradient(135deg, #a3c4f3, #e4e9f7);
+      color: #444;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      padding: 0 20px;
+    }
+
+    /* Container */
+    .container {
+      background-color: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    /* Title */
+    .title {
+      font-size: 2.5em;
+      font-weight: bold;
+      color: #3e4c59;
+      margin-bottom: 20px;
+      letter-spacing: 1px;
+    }
+
+    /* Introduction Text */
+    .intro {
+      font-size: 1.2em;
+      color: #6c757d;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    /* Emoji */
+    .emoji {
+      font-size: 3em;
+      margin-bottom: 20px;
+    }
+
+    /* Button */
+    .start-btn {
+      background-color: #6c63ff;
+      color: white;
+      padding: 15px 30px;
+      font-size: 1.2em;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    /* Button Hover Effect */
+    .start-btn:hover {
+      background-color: #5a54d7;
+      transform: scale(1.05);
+    }
+
+    /* Button Active State */
+    .start-btn:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="title">🎉 《幸运刮刮卡》！ 🎉</h1>
+  <p class="intro">
+    你是否也曾幻想过刮开一张刮刮卡，发现其中隐藏着意想不到的惊喜呢？现在，机会来了！在《幸运刮刮卡》里，每一次刮开都可能带给你不同的惊喜和奖励！💥🎁
+
+    💡 游戏玩法：
+    只需点击刮开卡片，背后隐藏的奖励将会呈现出来。你永远不知道下一张卡片会为你带来什么惊喜！🎲
+
+    🎯 目标：
+    挑战自己，看看能获得多少惊喜！每一次刮开，都是一次全新的体验！是不是已经迫不及待想要试试了呢？😎
+  </p>
+  <div class="emoji">😜🙃</div>
+  <button class="start-btn" onclick="window.location.href='raffle.html'">开始游戏</button>
+</div>
+</body>
+</html>

@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>幸运刮刮卡</title>
+    <link rel="shortcut icon" type="image/png" href="game_images/favicon.png" />
+    <style>
+        /* 重置样式 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-user-drag: none;
+        }
+
+        /* 响应式布局基础设置 */
+        :root {
+            --primary-color: #C2A681;
+            --secondary-color: #a17a4f;
+            --text-color: #a27b53;
+            --background-color: rgb(246, 246, 246);
+        }
+
+        body {
+            background-color: var(--background-color);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        .demo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(360px, 100vw - 20px);
+            height: min(600px, 100vh - 20px);
+            background-color: rgb(245, 245, 245);
+            border: 1px solid #333;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .demo .top {
+            position: absolute;
+            width: 100%;
+            height: 25%;
+            background-color: var(--primary-color);
+            border-radius: 0 0 190px 190px;
+        }
+
+        .demo .open {
+            position: absolute;
+            top: 120px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 60px;
+            background-color: var(--primary-color);
+            border: 3px solid var(--secondary-color);
+            border-radius: 50%;
+            line-height: 50px;
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--secondary-color);
+            z-index: 1;
+        }
+
+        .demo .title {
+            margin-top: 220px;
+            text-align: center;
+        }
+
+        .demo .title p {
+            font-size: clamp(2rem, 5vw, 3.375rem);
+            font-weight: 900;
+            color: var(--text-color);
+        }
+
+        .demo .title .content {
+            position: relative;
+            margin: 10px auto;
+            width: 200px;
+            height: 70px;
+            color: var(--text-color);
+        }
+
+        .demo .content span {
+            position: absolute;
+        }
+
+        .demo .content span:first-child {
+            left: 28px;
+            font-size: 1.8rem;
+        }
+
+        .demo .content span:nth-child(2) {
+            left: 28px;
+            top: 34px;
+            font-size: 1.3rem;
+        }
+
+        .demo .content span:last-child {
+            right: 23px;
+            top: -8px;
+            font-size: 3.5rem;
+            font-weight: 900;
+        }
+
+        #scratch-area {
+            position: relative;
+            width: 100%;
+            height: 128px;
+            margin-top: 1rem;
+        }
+
+
+        #canvas {
+            position: absolute;
+            top: 4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 358px;
+            height: 144px;
+            z-index: 1;
+
+        }
+
+        #prize-text {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            line-height: 1.4;
+            font-size: 1.25rem;
+            background-color: #fff;
+            color: var(--text-color);
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 2;
+        }
+
+        .footer {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 0.5rem;
+            background-color: var(--primary-color);
+        }
+
+        .restart-btn {
+            width: 100%;
+            height: 40px;
+            background-color: var(--secondary-color);
+            border: none;
+            color: white;
+            font-size: 1.125rem;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .restart-btn:hover {
+            background-color: #856341;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: min(300px, 90vw);
+            background: #fff;
+            padding: 1.25rem;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .modal-text {
+            color: var(--text-color);
+            font-size: 1rem;
+            max-height: 60vh;
+            overflow-y: auto;
+            margin: 1rem 0;
+            line-height: 1.5;
+        }
+
+        .close-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 0.5rem 1.25rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-btn:hover {
+            background-color: var(--secondary-color);
+        }
+    </style>
+</head>
+<body>
+<div class="demo">
+    <div class="top">
+        <div class="open">開</div>
+    </div>
+    <div class="title">
+        <p>幸运刮刮卡</p>
+        <div class="content">
+            <span>刮一刮</span>
+            <span>等你来拿</span>
+            <span>奖</span>
+        </div>
+    </div>
+    <div id="scratch-area">
+        <div id="prize-text"></div>
+        <canvas id="canvas"></canvas>
+    </div>
+    <div class="footer">
+        <button id="restartButton" class="restart-btn">再来一次</button>
+    </div>
+
+    <div class="modal" id="myModal">
+        <div class="modal-content">
+            <h3>祝福语</h3>
+            <div class="modal-text" id="modalText"></div>
+<!--            <button class="close-btn" onclick="closeModal()">关闭</button>-->
+        </div>
+    </div>
+</div>
+
+<script>
+    // 使用立即执行函数来避免全局变量污染
+    (function() {
+        // 获取DOM元素
+        const canvas = document.querySelector('#canvas');
+        const ctx = canvas.getContext('2d');
+        const prizeText = document.querySelector('#prize-text');
+        const modal = document.getElementById('myModal');
+        const modalText = document.getElementById('modalText');
+        const restartButton = document.getElementById('restartButton');
+
+        // 检查Canvas上下文是否获取成功
+        if (!ctx) {
+            console.error('无法获取Canvas上下文');
+            return;
+        }
+
+        // 游戏状态管理
+        const gameState = {
+            isDrawing: false,
+            lastPoint: { x: 0, y: 0 },
+            isRevealed: false,
+            modalShown: false
+        };
+
+        // 祝福语数据
+        // const blessings = [
+        //     "王姐，生日快乐！22岁正是人生最美好的时光，愿你继续保持这份活力与快乐，笑口常开，每一天都充满阳光！",
+        //     "乔治，生日快乐！22岁的一年，愿你能拥有更多有趣的经历，继续做那个活泼可爱的你，心想事成，幸福满满！",
+        //     "老王，生日来啦！今天是你的特别日子，祝你生日如意，笑容灿烂，每一个梦想都能慢慢实现，越来越好！",
+        //     "王姐，22岁生日快乐！愿你今后的一年更加精彩，继续保持你的活力和快乐，让生活永远充满惊喜与笑声！",
+        //     "亲爱的乔治，生日快乐！22岁的你一定会更加闪耀，愿你未来的日子里越来越自信，越来越美丽，开心每一天！",
+        //     "老王，生日快乐！22岁正是大展宏图的年纪，愿你的一年中，事业顺利，爱情甜蜜，生活充满欢声笑语！",
+        //     "王姐，祝你生日快乐！愿你在新的一岁里，无论走到哪里，都能带着这份独特的活力和笑容，拥有最美好的时光！",
+        //     "乔治，生日快乐！22岁的你青春洋溢，活力满满，未来的路一定光明灿烂，愿你一直这样开心快乐！",
+        //     "老王，生日快乐！感谢你的活力与乐观，让周围的人都能感受到无尽的正能量。希望你每天都能笑得更灿烂，幸福常伴！",
+        //     "王姐，生日快乐！希望你在22岁的这一年里，继续做那个充满朝气和笑容的女孩，愿所有的好运和幸福都降临在你身边！",
+        //     "这有一封信（附链接）",
+        //     "这有一个写给你的故事（附链接）"
+        // ];
+
+        const blessings = [
+            // "王姐，生日快乐！希望你在22岁的这一年里，继续做那个充满朝气和笑容的女孩，愿所有的好运和幸福都降临在你身边！",
+            // "王姐，祝你生日快乐！愿你在新的一岁里，无论走到哪里，都能带着这份独特的活力和笑容，拥有最美好的时光！",
+            "这有一封写给你的信（附链接）",
+            "这有一个等你解密的故事（附链接）",
+            // "老王，生日快乐！感谢你的活力与乐观，让周围的人都能感受到无尽的正能量。希望你每天都能笑得更灿烂，幸福常伴！",
+            // "王姐，生日快乐！22岁正是人生最美好的时光，愿你继续保持这份活力与快乐，笑口常开，每一天都充满阳光！",
+        ];
+
+// 初始化函数
+        function initGame() {
+            // 设置canvas尺寸
+            canvas.width = 316;
+            canvas.height = 108;
+
+            // 重置游戏状态
+            gameState.isRevealed = false;
+            gameState.modalShown = false;
+
+            // 初始化画布
+            ctx.fillStyle = "#aba9aa";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '25px sans-serif';
+            ctx.fillStyle = "#fff";
+            ctx.textAlign = 'center';
+            ctx.fillText("刮奖区", canvas.width / 2, canvas.height / 2);
+
+            // 随机选择祝福语
+            const blessingIndex = Math.floor(Math.random() * blessings.length);
+
+            // 如果选中了带链接的祝福语，则设置为链接
+            if (blessingIndex === blessings.length - 2) { // "这有一封信（附链接）"
+                prizeText.innerHTML = `<a href="../eluvletter/index.html" target="_blank" style="color: var(--text-color); text-decoration: none;">这有一封写给你的信（附链接）</a>`;
+            } else if (blessingIndex === blessings.length - 1) { // "这有一个写给你的故事（附链接）"
+                prizeText.innerHTML = `<a href="./story.html" target="_blank" style="color: var(--text-color); text-decoration: none;">这有一个等你解密的故事（附链接）</a>`;
+            } else {
+                prizeText.innerText = blessings[blessingIndex];
+            }
+        }
+
+        // 获取画布坐标
+        function getCanvasPos(e) {
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            
+            const pos = {
+                x: ((e.touches ? e.touches[0].clientX : e.clientX) - rect.left) * scaleX,
+                y: ((e.touches ? e.touches[0].clientY : e.clientY) - rect.top) * scaleY
+            };
+            
+            return pos;
+        }
+
+        // 开始绘制
+        function startDraw(e) {
+            e.preventDefault();
+            gameState.isDrawing = true;
+            gameState.lastPoint = getCanvasPos(e);
+        }
+
+        // 绘制过程
+        function draw(e) {
+            e.preventDefault();
+            if (!gameState.isDrawing) return;
+
+            const pos = getCanvasPos(e);
+
+            ctx.globalCompositeOperation = 'destination-out';
+            ctx.beginPath();
+            ctx.lineWidth = 20;
+            ctx.lineCap = 'round';
+            ctx.moveTo(gameState.lastPoint.x, gameState.lastPoint.y);
+            ctx.lineTo(pos.x, pos.y);
+            ctx.stroke();
+
+            gameState.lastPoint = pos;
+            
+            // 使用requestAnimationFrame检查刮开区域
+            requestAnimationFrame(checkRevealArea);
+        }
+
+        // 结束绘制
+        function endDraw() {
+            gameState.isDrawing = false;
+        }
+
+        // 检查刮开区域
+        function checkRevealArea() {
+            if (gameState.isRevealed || gameState.modalShown) return;
+
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+            let clearPixels = 0;
+
+            for (let i = 3; i < imageData.data.length; i += 4) {
+                if (imageData.data[i] === 0) clearPixels++;
+            }
+
+            const clearPercent = clearPixels / (canvas.width * canvas.height);
+            if (clearPercent > 0.6) {
+                gameState.isRevealed = true;
+                showModal();
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+            }
+        }
+
+        // 显示模态框
+        // function showModal() {
+        //     if (gameState.modalShown) return;
+        //
+        //     modal.style.display = 'block';
+        //     modalText.innerText = prizeText.innerText;
+        //     gameState.modalShown = true;
+        //
+        //     // 强制重排以触发过渡动画
+        //     modal.offsetHeight;
+        //     modal.classList.add('show');
+        // }
+
+        // 显示模态框
+        function showModal() {
+            if (gameState.modalShown) return;
+
+            modal.style.display = 'block';
+            // 在模态框中显示祝福语（包括链接）
+            modalText.innerHTML = prizeText.innerHTML;
+            gameState.modalShown = true;
+
+            // 强制重排以触发过渡动画
+            modal.offsetHeight;
+            modal.classList.add('show');
+        }
+
+
+        // 关闭模态框
+        function closeModal() {
+            modal.classList.remove('show');
+            // 等待淡出动画完成后隐藏模态框
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // 重置游戏
+        function restart() {
+            // 清除当前状态
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            gameState.isRevealed = false;
+            gameState.modalShown = false;
+
+            // 重新初始化游戏
+            initGame();
+
+            // 重新选择并更新奖品内容
+            // prizeText.innerText = blessings[Math.floor(Math.random() * blessings.length)];
+
+            // 关闭模态框
+            closeModal();
+        }
+
+
+        // 添加键盘事件监听，支持ESC键关闭模态框
+        function handleKeyPress(e) {
+            if (e.key === 'Escape' && gameState.modalShown) {
+                closeModal();
+            }
+        }
+
+        // 事件监听器设置
+        function setupEventListeners() {
+            // 鼠标事件
+            canvas.addEventListener('mousedown', startDraw);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', endDraw);
+            canvas.addEventListener('mouseout', endDraw);
+
+            // 触摸事件
+            canvas.addEventListener('touchstart', startDraw, { passive: false });
+            canvas.addEventListener('touchmove', draw, { passive: false });
+            canvas.addEventListener('touchend', endDraw);
+            canvas.addEventListener('touchcancel', endDraw);
+
+            // 模态框点击外部关闭
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // 键盘事件
+            document.addEventListener('keydown', handleKeyPress);
+
+            // 重新开始按钮
+            restartButton.addEventListener('click', restart);
+        }
+
+        // 清理事件监听器
+        function cleanupEventListeners() {
+            canvas.removeEventListener('mousedown', startDraw);
+            canvas.removeEventListener('mousemove', draw);
+            canvas.removeEventListener('mouseup', endDraw);
+            canvas.removeEventListener('mouseout', endDraw);
+
+            canvas.removeEventListener('touchstart', startDraw);
+            canvas.removeEventListener('touchmove', draw);
+            canvas.removeEventListener('touchend', endDraw);
+            canvas.removeEventListener('touchcancel', endDraw);
+
+            modal.removeEventListener('click', closeModal);
+            document.removeEventListener('keydown', handleKeyPress);
+            restartButton.removeEventListener('click', restart);
+        }
+
+        // 错误处理函数
+        function handleError(error) {
+            console.error('发生错误:', error);
+            // 可以在这里添加用户友好的错误提示
+        }
+
+        // 初始化游戏
+        try {
+            initGame();
+            setupEventListeners();
+        } catch (error) {
+            handleError(error);
+        }
+
+        // 在页面卸载时清理事件监听器
+        window.addEventListener('unload', cleanupEventListeners);
+    })();
+</script>
+</body>
+</html>
